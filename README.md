@@ -1,16 +1,46 @@
-# Roommate-Matcher
+## Roommate Matcher
 
-Collegiate Co-Living Platform
+# A Data-Driven Collegiate Co-Living Platform
 
-Made to eliminate the friction of finding a good roommate
+Roommate Matcher is a platform designed to eliminate the friction and uncertainty of finding a compatible roommate in a college environment. While most universities rely on random assignments or superficial surveys, this tool leverages specific compatibility metrics to ensure a harmonious living situation.
 
-## Who is it for?
+# 📌 Features
+Algorithm-Based Matching: Goes beyond "random assignment" by weighing lifestyle habits and personal preferences.
 
-Specifically designed for incoming and current college students seeking compatibility beyond random assignment
+Student-Centric Filters: Specifically tailored for the budget and community needs of college students.
 
-## Compatability Metrics
+Custom Profiles: Users can highlight hobbies and habits that matter most in a shared living space.
 
-The metrics that will be used to find a roommate are hobbies, gender, age, community, budget, smoking/drinking, noise level, and cleanliness
+# 📊 Compatibility Metrics
+The matching engine evaluates potential roommates based on several key data points:
+
+Lifestyle: Cleanliness levels and noise tolerance.
+
+Habits: Smoking/drinking preferences and sleep schedules.
+
+Logistics: Monthly budget range and preferred student communities.
+
+Personal: Hobbies, age, and gender identity.
+
+# 🛠️ Tech Stack (Suggested)
+Note: Update this section based on your current implementation.
+
+Backend: Python (Flask or Django)
+
+Frontend: HTML5, CSS3, JavaScript
+
+Database: SQLite (Development) / PostgreSQL (Production)
+
+# 🚀 Getting Started
+Prerequisites
+
+Python 3.x
+
+Pip (Python package manager)
+
+
+
+
 
 
 
