@@ -1,4 +1,4 @@
-## Roommate Matcher
+# Roommate Matcher
 
 # A Data-Driven Collegiate Co-Living Platform
 
