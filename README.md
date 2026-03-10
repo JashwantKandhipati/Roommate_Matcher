@@ -38,6 +38,10 @@ Python 3.x
 
 Pip (Python package manager)
 
+Flask
+
+Flask-SQLAlchemy
+
 
 
 

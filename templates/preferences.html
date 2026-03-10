@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compatibility Metrics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Set Your Compatibility Metrics</h1>
+        <p>Turn your subjective lifestyle choices into objective matching criteria.</p>
+        
+        <form action="/preferences/{{ user_id }}" method="POST">
+            <h3>Basic Info</h3>
+            <label>Age: <input type="number" name="age" required></label><br><br>
+            
+            <label>Gender: 
+                <select name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </label><br><br>
+            
+            <label>Hobbies: <input type="text" name="hobbies" placeholder="e.g. Gaming, Hiking"></label><br><br>
+            <label>Budget (Monthly $): <input type="number" name="budget" required></label><br><br>
+
+            <h3>Quantifying Lifestyle Habits</h3>
+            
+            <label>Cleanliness Standard:</label>
+            <div class="slider-wrapper">
+                <span class="slider-bubble" id="cleanBubble">80%</span>
+                <input type="range" id="cleanSlider" name="cleanliness" min="0" max="100" value="80" 
+                       oninput="updateSlider('cleanSlider', 'cleanBubble')">
+            </div>
+            
+            <label>Noise Level Preference:</label>
+            <div class="slider-wrapper">
+                <span class="slider-bubble" id="noiseBubble">30%</span>
+                <input type="range" id="noiseSlider" name="noise" min="0" max="100" value="30" 
+                       oninput="updateSlider('noiseSlider', 'noiseBubble')">
+            </div>
+
+            <label>Smoking: 
+                <input type="checkbox" name="smoking" value="yes">
+            </label><br><br>
+            
+            <label>Drinking: 
+                <input type="checkbox" name="drinking" value="yes">
+            </label><br><br>
+
+            <button type="submit">Save Profile & Find Matches</button>
+        </form>
+    </div>
+
+    <script>
+        function updateSlider(sliderId, bubbleId) {
+            const slider = document.getElementById(sliderId);
+            const bubble = document.getElementById(bubbleId);
+            const val = slider.value;
+            
+            // 1. Update the text inside the bubble
+            bubble.textContent = val + '%';
+            
+            // 2. Calculate the exact position
+            const percent = (val - slider.min) / (slider.max - slider.min);
+            const thumbOffset = (0.5 - percent) * 16; 
+            
+            bubble.style.left = `calc(${percent * 100}% + ${thumbOffset}px)`;
+        }
+
+        // Run the function once when the page loads to position the bubbles correctly at the start
+        window.onload = function() {
+            updateSlider('cleanSlider', 'cleanBubble');
+            updateSlider('noiseSlider', 'noiseBubble');
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Matches - Roommate Matcher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .match-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Top Matches</h1>
+        <p>Welcome, {{ current_user.name }}! Here are suitable roommates based on your data.</p>
+
+        {% if potential_matches %}
+            {% for match in potential_matches %}
+            <div class="match-card">
+                <h3>{{ match.name }} ({{ match.college }})</h3>
+                <p><strong>Cleanliness:</strong> {{ match.cleanliness }}% | <strong>Noise:</strong> {{ match.noise_level }}%</p>
+                <p><strong>Budget:</strong> ${{ match.budget }} | <strong>Hobbies:</strong> {{ match.hobbies }}</p>
+                <button>Connect</button>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="match-card">
+                <h3>No other users yet!</h3>
+                <p>You are the first person in the database. Open a private/incognito tab and create a second user to see them pop up here!</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
