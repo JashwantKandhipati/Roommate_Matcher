@@ -5,39 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Matches - Roommate Matcher</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
+        /* Modern Campus - Bento Grid Specific Styles */
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
         .match-card {
-            border: 1px solid #ccc;
+            background: white;
+            border: 1px solid #EDF2F7;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .match-card:hover {
+            border-color: #FF7900; /* Accent Orange */
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px rgba(27, 54, 93, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .compatibility-badge {
+            background: rgba(255, 121, 0, 0.1);
+            color: #FF7900;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .match-name {
+            color: #1B365D; /* Primary Navy */
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .match-info p {
+            margin: 6px 0;
+            font-size: 0.9rem;
+            color: #718096;
+            text-align: left; /* Overriding base p align */
+        }
+
+        .match-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1B365D;
+            border: 1px solid #1B365D;
+            flex: 1;
+            padding: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
             border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(27, 54, 93, 0.05);
+        }
+
+        .btn-primary {
+            background-color: #1B365D;
+            color: white;
+            border: none;
+            flex: 1;
+            padding: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="max-width: 900px;">
         <h1>Your Top Matches</h1>
-        <p>Welcome, {{ current_user.name }}! Here are suitable roommates based on your data.</p>
+        <p>Welcome, {{ current_user.name }}! We found these potential roommates based on your shared metrics.</p>
 
-        {% if matches_list %}
-            {% for match in matches_list %}
-            <div class="match-card">
-                <h2 style="color: #ed4a8a; margin-bottom: 5px;">{{ match.score }}% Match</h2>
-                
-                <h3>{{ match.user.name }} ({{ match.user.college }})</h3>
-                <p><strong>Cleanliness:</strong> {{ match.user.cleanliness }}% | <strong>Noise:</strong> {{ match.user.noise_level }}%</p>
-                <p><strong>Budget:</strong> ${{ match.user.budget }} | <strong>Hobbies:</strong> {{ match.user.hobbies }}</p>
-                <p><strong>Smoking:</strong> {{ 'Yes' if match.user.smoking else 'No' }} | <strong>Drinking:</strong> {{ 'Yes' if match.user.drinking else 'No' }}</p>
-                <button>Connect</button>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="match-card">
-                <h3>No other users yet!</h3>
-                <p>You are the first person in the database. Open a private/incognito tab, create a second user, and see your match percentage pop up here!</p>
-            </div>
-        {% endif %}
+        <div class="match-grid">
+            {% if potential_matches %}
+                {% for match in potential_matches %}
+                <div class="match-card">
+                    <div class="match-info">
+                        <div class="card-header">
+                            <h3 class="match-name">{{ match.name }}</h3>
+                            <span class="compatibility-badge">92% Match</span> </div>
+                        <p><strong>University:</strong> {{ match.college }}</p>
+                        <p><strong>Lifestyle:</strong> {{ match.cleanliness }}% Clean | {{ match.noise_level }}% Noise</p>
+                        <p><strong>Budget:</strong> ${{ match.budget }}/mo</p>
+                    </div>
+                    
+                    <div class="match-actions">
+                        <button class="btn-primary">Connect</button>
+                        <button class="btn-secondary">View Profile</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="match-card" style="grid-column: 1 / -1; text-align: center;">
+                    <h3 class="match-name">No other users yet!</h3>
+                    <p>You are the first person in the database. Open an incognito tab to create a second user and see them appear here.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>

@@ -1,154 +1,113 @@
-/* General Page Styling */
+/* Modern Campus Theme */
+:root {
+    --primary-navy: #1B365D;
+    --accent-orange: #FF7900;
+    --bg-off-white: #F8F9FA;
+    --glass-bg: rgba(255, 255, 255, 0.92); /* Subtle glass effect */
+    --text-main: #2D3748;
+    --text-muted: #718096;
+    --border-radius: 12px;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-off-white);
+    background-image: radial-gradient(circle at 2px 2px, #e2e8f0 1px, transparent 0); /* Subtle grid pattern */
+    background-size: 40px 40px;
+    color: var(--text-main);
     margin: 0;
-    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
 }
 
-/* Main Container */
+/* Subtle Glassmorphism Container */
 .container {
-    background-color: #ffffff;
+    background: var(--glass-bg);
+    backdrop-filter: blur(4px); /* Very low blur as requested */
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 25px rgba(27, 54, 93, 0.05);
+    max-width: 550px;
     width: 100%;
-    margin: 20px;
 }
 
-/* Headings */
 h1 {
-    color: #2c3e50;
-    font-size: 24px;
-    margin-bottom: 5px;
-    text-align: center;
-}
-
-h2 {
-    color: #7f8c8d;
-    font-size: 16px;
-    font-weight: 400;
-    margin-bottom: 30px;
+    color: var(--primary-navy);
+    font-weight: 800;
+    letter-spacing: -0.5px;
     text-align: center;
 }
 
 h3 {
-    color: #34495e;
-    font-size: 18px;
-    margin-top: 30px;
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 5px;
+    color: var(--primary-navy);
+    font-size: 1.1rem;
+    margin-top: 2rem;
+    border-left: 4px solid var(--accent-orange);
+    padding-left: 12px;
 }
 
-p {
-    text-align: center;
-    color: #7f8c8d;
-    font-size: 14px;
-    margin-bottom: 30px;
-}
-
-/* Form Elements */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #2c3e50;
-    display: flex;
-    flex-direction: column;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="tel"],
-select {
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="tel"]:focus,
-select:focus {
-    border-color: #3498db;
-    outline: none;
-}
-
-/* Sliders for Lifestyle Habits */
-input[type="range"] {
-    margin-top: 10px;
+/* Form Styling */
+input, select {
     width: 100%;
-}
-
-/* Checkboxes */
-input[type="checkbox"] {
-    margin-top: 10px;
-    transform: scale(1.2);
-    align-self: flex-start;
-}
-
-/* Buttons */
-button {
-    background-color: #3498db;
-    color: white;
     padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+input:focus {
+    border-color: var(--primary-navy);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(27, 54, 93, 0.1);
+}
+
+button {
+    background-color: var(--primary-navy);
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 14px;
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
     cursor: pointer;
-    margin-top: 25px;
-    transition: background-color 0.3s ease;
+    transition: transform 0.1s, background-color 0.2s;
 }
 
 button:hover {
-    background-color: #2980b9;
+    background-color: #142a4a;
+    transform: translateY(-1px);
 }
 
-/* Floating Slider */
-
-.slider-wrapper {
-    position: relative;
-    width: 100%;
-    margin-top: 35px; 
-    margin-bottom: 30px;
+/* Bento-style Match Cards */
+.match-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 20px;
 }
 
-.slider-bubble {
-    position: absolute;
-    top: -30px;
-    transform: translateX(-50%); 
-    background-color: #ed4a8a; 
-    color: white;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    pointer-events: none;     
-    will-change: left; 
+.match-card {
+    background: white;
+    border: 1px solid #EDF2F7;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    transition: border-color 0.3s;
 }
 
-.slider-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px 5px 0;
-    border-style: solid;
-    border-color: #ed4a8a transparent transparent transparent;
+.match-card:hover {
+    border-color: var(--accent-orange);
+}
+
+.compatibility-badge {
+    background: rgba(255, 121, 0, 0.1);
+    color: var(--accent-orange);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
 }
