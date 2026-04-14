@@ -6,7 +6,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///roommates.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# DATABASE MODEL
+# The updated User database model with ALL metrics
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -23,37 +23,35 @@ class User(db.Model):
     smoking = db.Column(db.Boolean, default=False)
     drinking = db.Column(db.Boolean, default=False)
 
+def calculate_compatibility(user1, user2):
+    """Calculates compatibility score on a 0-100 scale."""
+    score = 0
+    
+    # Budget compatibility (within $200) - 30 points
+    if abs((user1.budget or 0) - (user2.budget or 0)) <= 200:
+        score += 30
+
+    # Lifestyle compatibility (Cleanliness & Noise) - 40 points total
+    # This logic accounts for the 0-100 slider values
+    clean_diff = abs((user1.cleanliness or 0) - (user2.cleanliness or 0))
+    noise_diff = abs((user1.noise_level or 0) - (user2.noise_level or 0))
+    # We penalize the score based on how far apart the preferences are
+    score += max(0, 40 - (clean_diff + noise_diff) // 4)
+
+    # Habits match (Smoking & Drinking) - 20 points total
+    if user1.smoking == user2.smoking:
+        score += 10
+    if user1.drinking == user2.drinking:
+        score += 10
+
+    # College match - 10 points
+    if user1.college.lower() == user2.college.lower():
+        score += 10
+        
+    return score
+
 with app.app_context():
     db.create_all()
-
-# MATCHING ALGORITHM
-def calculate_compatibility(user1, user2):
-    score = 100.0
-    
-    # Cleanliness (30%)
-    clean_diff = abs((user1.cleanliness or 50) - (user2.cleanliness or 50))
-    score -= (clean_diff * 0.30)
-    
-    # Noise Level (30%)
-    noise_diff = abs((user1.noise_level or 50) - (user2.noise_level or 50))
-    score -= (noise_diff * 0.30)
-    
-    # Smoking Habit (20%)
-    if user1.smoking != user2.smoking:
-        score -= 20
-        
-    # Drinking Habit (10%)
-    if user1.drinking != user2.drinking:
-        score -= 10
-        
-    # Budget (10%)
-    budget_diff = abs((user1.budget or 0) - (user2.budget or 0))
-    budget_penalty = min((budget_diff / 500.0) * 10, 10)
-    score -= budget_penalty
-    
-    return round(max(0, score))
-
-# ROUTES
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -70,12 +68,12 @@ def login():
     
     return render_template('login.html')
 
-
 @app.route('/preferences/<int:user_id>', methods=['GET', 'POST'])
 def preferences(user_id):
-    user = User.query.get_or_404(user_id) 
+    user = User.query.get_or_404(user_id) # Find the user in the database
     
     if request.method == 'POST':
+        # Update the user's empty columns with the form data
         user.age = request.form.get('age')
         user.gender = request.form.get('gender')
         user.hobbies = request.form.get('hobbies')
@@ -85,28 +83,31 @@ def preferences(user_id):
         user.smoking = True if request.form.get('smoking') else False
         user.drinking = True if request.form.get('drinking') else False
         
-        db.session.commit() 
-        return redirect(url_for('matches', user_id=user.id)) 
+        db.session.commit() # Save the updates
+        return redirect(url_for('matches', user_id=user.id)) # Send to matches page
         
     return render_template('preferences.html', user_id=user_id)
 
-
 @app.route('/matches/<int:user_id>')
 def matches(user_id):
-    current_user = User.query.get_or_404(user_id)
+    user = User.query.get_or_404(user_id)
+    # Fetch everyone except the person currently logged in
     all_other_users = User.query.filter(User.id != user_id).all()
     
-    matches_list = []
-    for other_user in all_other_users:
-        match_score = calculate_compatibility(current_user, other_user)
-        matches_list.append({
-            'user': other_user,
-            'score': match_score
+    # Calculate scores for each potential match
+    scored_matches = []
+    for other in all_other_users:
+        score = calculate_compatibility(user, other)
+        # Store both the user object and their score
+        scored_matches.append({
+            'data': other,
+            'score': score
         })
         
-    matches_list.sort(key=lambda x: x['score'], reverse=True)
+    # Sort matches by highest score first
+    scored_matches.sort(key=lambda x: x['score'], reverse=True)
     
-    return render_template('matches.html', current_user=current_user, matches_list=matches_list)
+    return render_template('matches.html', current_user=user, potential_matches=scored_matches)
 
 if __name__ == '__main__':
     app.run(debug=True)
