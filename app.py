@@ -20,6 +20,7 @@ class User(db.Model):
     budget = db.Column(db.Integer, nullable=True)
     cleanliness = db.Column(db.Integer, nullable=True)
     noise_level = db.Column(db.Integer, nullable=True)
+    sleep_schedule = db.Column(db.String(20), nullable=True)
     smoking = db.Column(db.Boolean, default=False)
     drinking = db.Column(db.Boolean, default=False)
 
@@ -80,6 +81,7 @@ def preferences(user_id):
         user.budget = request.form.get('budget')
         user.cleanliness = request.form.get('cleanliness')
         user.noise_level = request.form.get('noise')
+        user.sleep_schedule = request.form.get('sleep_schedule')
         user.smoking = True if request.form.get('smoking') else False
         user.drinking = True if request.form.get('drinking') else False
         
