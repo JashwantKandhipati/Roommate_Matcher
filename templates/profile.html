@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }}'s Profile - Roommate Matcher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 650px;">
+        <header style="text-align: center; margin-bottom: 30px;">
+            <a href="javascript:history.back()" style="color: var(--primary-navy); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 5px;">
+                <i data-lucide="arrow-left" style="width: 16px;"></i> Back to Matches
+            </a>
+            <h1 style="margin-top: 20px;">{{ user.name }}</h1>
+            <p style="color: var(--text-muted);">{{ user.college }}</p>
+        </header>
+
+        <div style="background: white; border-radius: 12px; padding: 25px; border: 1px solid #E2E8F0;">
+            <h3>Overview</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                <p><strong><i data-lucide="user" style="width: 16px; vertical-align: middle;"></i> Age:</strong> {{ user.age }}</p>
+                <p><strong><i data-lucide="info" style="width: 16px; vertical-align: middle;"></i> Gender:</strong> {{ user.gender }}</p>
+                <p><strong><i data-lucide="dollar-sign" style="width: 16px; vertical-align: middle;"></i> Budget:</strong> ${{ user.budget }}/mo</p>
+                <p><strong><i data-lucide="moon" style="width: 16px; vertical-align: middle;"></i> Sleep:</strong> {{ user.sleep_schedule|capitalize }}</p>
+            </div>
+
+            <h3>Lifestyle Metrics</h3>
+            <div style="margin-top: 15px;">
+                <label>Cleanliness Standard: {{ user.cleanliness }}%</label>
+                <div style="width: 100%; background: #EDF2F7; height: 10px; border-radius: 5px; margin-top: 5px;">
+                    <div style="width: {{ user.cleanliness }}%; background: var(--primary-navy); height: 100%; border-radius: 5px;"></div>
+                </div>
+                
+                <label style="display: block; margin-top: 15px;">Noise Tolerance: {{ user.noise_level }}%</label>
+                <div style="width: 100%; background: #EDF2F7; height: 10px; border-radius: 5px; margin-top: 5px;">
+                    <div style="width: {{ user.noise_level }}%; background: var(--accent-orange); height: 100%; border-radius: 5px;"></div>
+                </div>
+            </div>
+
+            <h3>Habits & Hobbies</h3>
+            <div style="margin-top: 15px;">
+                <p><strong>Hobbies:</strong> {{ user.hobbies }}</p>
+                <p><strong>Smoking:</strong> {{ 'Yes' if user.smoking else 'No' }}</p>
+                <p><strong>Drinking:</strong> {{ 'Yes' if user.drinking else 'No' }}</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <a href="tel:{{ user.phone }}" class="btn-primary" style="display: block; text-align: center; text-decoration: none;">
+                <i data-lucide="phone" style="width: 18px; vertical-align: middle; margin-right: 8px;"></i> Connect via Phone
+            </a>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
