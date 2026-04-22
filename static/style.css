@@ -1,113 +1,57 @@
-/* Modern Campus Theme */
+/* Modern Campus - High Readability Version */
 :root {
     --primary-navy: #1B365D;
     --accent-orange: #FF7900;
     --bg-off-white: #F8F9FA;
-    --glass-bg: rgba(255, 255, 255, 0.92); /* Subtle glass effect */
-    --text-main: #2D3748;
-    --text-muted: #718096;
-    --border-radius: 12px;
+    --text-main: #1A202C; /* Darker for higher contrast */
+    --text-muted: #4A5568;
+    --border-radius: 16px;
+    --font-base: 18px; /* Increased from 14px */
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: var(--font-base);
+    line-height: 1.6; /* More space between lines */
     background-color: var(--bg-off-white);
-    background-image: radial-gradient(circle at 2px 2px, #e2e8f0 1px, transparent 0); /* Subtle grid pattern */
-    background-size: 40px 40px;
     color: var(--text-main);
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
 }
 
-/* Subtle Glassmorphism Container */
 .container {
-    background: var(--glass-bg);
-    backdrop-filter: blur(4px); /* Very low blur as requested */
-    -webkit-backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 40px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 10px 25px rgba(27, 54, 93, 0.05);
-    max-width: 550px;
-    width: 100%;
+    background: white;
+    padding: 3rem; /* More padding for a premium feel */
+    border-radius: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    max-width: 650px;
+    width: 90%;
+    margin: 40px auto;
 }
 
-h1 {
-    color: var(--primary-navy);
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    text-align: center;
-}
+h1 { font-size: 2.5rem; font-weight: 800; color: var(--primary-navy); }
+h2 { font-size: 1.5rem; color: var(--text-muted); }
+h3 { font-size: 1.25rem; margin-top: 2.5rem; }
 
-h3 {
-    color: var(--primary-navy);
+/* Larger Inputs */
+input, select, textarea {
     font-size: 1.1rem;
-    margin-top: 2rem;
-    border-left: 4px solid var(--accent-orange);
-    padding-left: 12px;
-}
-
-/* Form Styling */
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #E2E8F0;
-    border-radius: 8px;
-    background: white;
-    transition: all 0.2s ease;
-}
-
-input:focus {
-    border-color: var(--primary-navy);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(27, 54, 93, 0.1);
-}
-
-button {
-    background-color: var(--primary-navy);
-    color: white;
-    font-weight: 600;
-    border-radius: 8px;
     padding: 14px;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.1s, background-color 0.2s;
+    border-radius: 12px;
+    border: 2px solid #E2E8F0; /* Thicker borders for better visibility */
 }
 
-button:hover {
-    background-color: #142a4a;
-    transform: translateY(-1px);
-}
-
-/* Bento-style Match Cards */
-.match-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-top: 20px;
-}
-
-.match-card {
-    background: white;
-    border: 1px solid #EDF2F7;
-    border-radius: var(--border-radius);
-    padding: 20px;
-    transition: border-color 0.3s;
-}
-
-.match-card:hover {
-    border-color: var(--accent-orange);
-}
-
-.compatibility-badge {
-    background: rgba(255, 121, 0, 0.1);
-    color: var(--accent-orange);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
+button, .btn-primary {
+    font-size: 1.1rem;
+    padding: 16px;
     font-weight: 700;
+}
+
+/* Notification Badge */
+.nav-badge {
+    background: #E53E3E;
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 5px;
 }

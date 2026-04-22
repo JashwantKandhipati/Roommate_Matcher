@@ -1,0 +1,23 @@
+<div class="container" style="max-width: 800px;">
+    <nav style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+        <a href="{{ url_for('matches', user_id=session['user_id']) }}" style="text-decoration: none; color: var(--primary-navy); font-weight: 700;">
+            <i data-lucide="search"></i> Find Roommates
+        </a>
+        <span style="color: var(--accent-orange); font-weight: 800;">My Inbox</span>
+    </nav>
+
+    <h1>Messages</h1>
+    <div class="match-grid">
+        {% for contact in contacts %}
+        <a href="{{ url_for('chat', sender_id=session['user_id'], receiver_id=contact.id) }}" style="text-decoration: none;">
+            <div class="match-card" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0;">{{ contact.name }}</h3>
+                    <p style="margin: 0; font-size: 0.9rem;">{{ contact.college }}</p>
+                </div>
+                <i data-lucide="chevron-right"></i>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>

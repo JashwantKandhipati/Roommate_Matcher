@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from matching import calculate_compatibility
+from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = 'any_long_random_string_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///roommates.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -24,6 +26,15 @@ class User(db.Model):
     sleep_schedule = db.Column(db.String(20), nullable=True)
     smoking = db.Column(db.Boolean, default=False)
     drinking = db.Column(db.Boolean, default=False)
+    
+# Chat feature
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    content = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    is_read = db.Column(db.Boolean, default=False) # For notifications
 
 with app.app_context():
     db.create_all()
@@ -32,16 +43,35 @@ with app.app_context():
 def login():
     if request.method == 'POST':
         name = request.form.get('name')
-        college = request.form.get('college')
         phone = request.form.get('phone')
         
-        new_user = User(name=name, college=college, phone=phone)
-        db.session.add(new_user)
-        db.session.commit()
+        # Check if user exists (Simple persistent login)
+        user = User.query.filter_by(name=name, phone=phone).first()
         
-        return redirect(url_for('preferences', user_id=new_user.id))
-    
+        if not user:
+            user = User(name=name, college=request.form.get('college'), phone=phone)
+            db.session.add(user)
+            db.session.commit()
+            session['user_id'] = user.id
+            return redirect(url_for('preferences', user_id=user.id))
+        
+        session['user_id'] = user.id
+        return redirect(url_for('matches', user_id=user.id))
     return render_template('login.html')
+
+@app.route('/inbox')
+def inbox():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    user_id = session['user_id']
+    
+    # Get unique users the current user has chatted with
+    sent = db.session.query(Message.receiver_id).filter_by(sender_id=user_id)
+    received = db.session.query(Message.sender_id).filter_by(receiver_id=user_id)
+    contact_ids = [r[0] for r in sent.union(received).all()]
+    contacts = User.query.filter(User.id.in_(contact_ids)).all()
+    
+    unread_count = Message.query.filter_by(receiver_id=user_id, is_read=False).count()
+    return render_template('inbox.html', contacts=contacts, unread_count=unread_count)
 
 @app.route('/preferences/<int:user_id>', methods=['GET', 'POST'])
 def preferences(user_id):
@@ -66,25 +96,51 @@ def preferences(user_id):
 
 @app.route('/matches/<int:user_id>')
 def matches(user_id):
-    user = User.query.get_or_404(user_id)
-    
-    # Same college only
-    all_other_users = User.query.filter(
-        User.id != user_id,
-        User.college == user.college
-    ).all()
+    current_user = User.query.get_or_404(user_id)
+    # Fetch everyone except the person currently logged in
+    all_others = User.query.filter(User.id != user_id).all()
     
     scored_matches = []
-    for other in all_other_users:
-        score = calculate_compatibility(user, other)
-        scored_matches.append({
-            'data': other,
-            'score': score
-        })
-        
+    for other in all_others:
+        score = calculate_compatibility(current_user, other)
+        scored_matches.append({'data': other, 'score': score})
+    
     scored_matches.sort(key=lambda x: x['score'], reverse=True)
     
-    return render_template('matches.html', current_user=user, potential_matches=scored_matches)
+    # FIX: Calculate the unread count to pass to the template
+    unread_count = Message.query.filter_by(receiver_id=user_id, is_read=False).count()
+    
+    return render_template('matches.html', 
+                           current_user=current_user, 
+                           potential_matches=scored_matches, 
+                           unread_count=unread_count)
+
+@app.route('/profile/<int:user_id>')
+def view_profile(user_id):
+    """View the full profile of a potential roommate."""
+    user = User.query.get_or_404(user_id)
+    return render_template('profile.html', user=user)
+
+@app.route('/chat/<int:sender_id>/<int:receiver_id>', methods=['GET', 'POST'])
+def chat(sender_id, receiver_id):
+    sender = User.query.get_or_404(sender_id)
+    receiver = User.query.get_or_404(receiver_id)
+    
+    if request.method == 'POST':
+        content = request.form.get('message')
+        if content:
+            new_msg = Message(sender_id=sender_id, receiver_id=receiver_id, content=content)
+            db.session.add(new_msg)
+            db.session.commit()
+            return redirect(url_for('chat', sender_id=sender_id, receiver_id=receiver_id))
+
+    # Fetch messages between these two users
+    messages = Message.query.filter(
+        ((Message.sender_id == sender_id) & (Message.receiver_id == receiver_id)) |
+        ((Message.sender_id == receiver_id) & (Message.receiver_id == sender_id))
+    ).order_by(Message.timestamp.asc()).all()
+    
+    return render_template('chat.html', sender=sender, receiver=receiver, messages=messages)
 
 if __name__ == '__main__':
     app.run(debug=True)
