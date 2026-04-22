@@ -3,68 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Matches - Roommate Matcher</title>
+    <title>Find Matches - Roommate Matcher</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container" style="max-width: 900px;">
-        <header style="text-align: center; margin-bottom: 40px;">
-            <h1>Your Top Matches</h1>
-            <p>Welcome, <strong>{{ current_user.name }}</strong>! We found these roommates based on your shared collegiate metrics.</p>
-        </header>
+    <div class="container" style="max-width: 950px;">
+        <nav style="display: flex; justify-content: space-between; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #F1F5F9;">
+            <span style="color: var(--primary-navy); font-weight: 800; font-size: 1.2rem;">DASHBOARD</span>
+            <a href="{{ url_for('inbox') }}" style="text-decoration: none; color: var(--text-main); font-weight: 700; display: flex; align-items: center;">
+                <i data-lucide="mail" style="margin-right: 8px;"></i> Inbox 
+                {% if unread_count > 0 %}<span class="nav-badge">{{ unread_count }}</span>{% endif %}
+            </a>
+        </nav>
 
-        <div class="match-grid">
+        <h1>Your Matches</h1>
+        <p style="text-align: center;">Welcome, {{ current_user.name }}! Explore roommates matching your collegiate profile.</p>
+
+        <div class="match-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
             {% if potential_matches %}
                 {% for match in potential_matches %}
-                <div class="match-card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="margin: 0; color: #1B365D;">{{ match.data.name }}</h3>
-                        <span class="compatibility-badge" style="background: #E0F2FE; color: #0284C7; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">
+                <div class="match-card" style="background: white; border: 1px solid #E2E8F0; padding: 25px; border-radius: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0;">{{ match.data.name }}</h3>
+                        <span style="background: #E0F2FE; color: #0369A1; padding: 5px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem;">
                             {{ match.score }}% Match
                         </span>
                     </div>
                     
-                    <div style="margin: 20px 0; color: #4A5568; font-size: 0.95rem;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <i data-lucide="graduation-cap" style="width: 18px; color: #718096;"></i> 
-                            <span>{{ match.data.college }}</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <i data-lucide="dollar-sign" style="width: 18px; color: #718096;"></i> 
-                            <span>${{ match.data.budget }}/month</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <i data-lucide="sparkles" style="width: 18px; color: #718096;"></i> 
-                            <span>{{ match.data.cleanliness }}% Cleanliness Score</span>
-                        </div>
+                    <div style="font-size: 1rem; color: #4A5568; margin-bottom: 20px;">
+                        <p style="margin: 5px 0;"><i data-lucide="graduation-cap" style="width: 18px; vertical-align: middle;"></i> {{ match.data.college }}</p>
+                        <p style="margin: 5px 0;"><i data-lucide="dollar-sign" style="width: 18px; vertical-align: middle;"></i> ${{ match.data.budget }}/mo</p>
                     </div>
 
-                    <div class="match-actions" style="display: flex; gap: 12px; margin-top: 10px;">
-                        <a href="tel:{{ match.data.phone }}" class="btn-primary" style="flex: 2; text-decoration: none; text-align: center; display: inline-block;">
-                            Connect
-                        </a>
-                        
-                        <a href="{{ url_for('view_profile', user_id=match.data.id) }}" class="btn-secondary" 
-                           style="flex: 1; border: 1px solid #1B365D; color: #1B365D; background: transparent; border-radius: 8px; text-decoration: none; text-align: center; padding: 12px; font-weight: 600; font-size: 0.9rem; transition: background 0.2s;">
-                            Profile
-                        </a>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="{{ url_for('chat', sender_id=current_user.id, receiver_id=match.data.id) }}" class="btn-primary" style="text-decoration: none; text-align: center; flex: 2; padding: 12px;">Message</a>
+                        <a href="{{ url_for('view_profile', user_id=match.data.id) }}" style="flex: 1; border: 2px solid var(--primary-navy); color: var(--primary-navy); border-radius: 12px; text-align: center; text-decoration: none; padding: 12px; font-weight: 700;">Profile</a>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
-                <div style="grid-column: 1 / -1; text-align: center; padding: 60px; background: white; border-radius: 16px; border: 2px dashed #E2E8F0;">
-                    <i data-lucide="users" style="width: 48px; height: 48px; color: #CBD5E0; margin-bottom: 15px;"></i>
-                    <h3 style="color: #718096;">No other matches found yet</h3>
-                    <p>Try creating another user in a private window to see them appear here!</p>
-                </div>
+                <p style="grid-column: 1 / -1; text-align: center; padding: 50px;">No matches found yet.</p>
             {% endif %}
         </div>
     </div>
-
-    <script>
-        lucide.createIcons();
-    </script>
+    <script>lucide.createIcons();</script>
 </body>
 </html>

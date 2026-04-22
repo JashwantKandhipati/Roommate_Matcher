@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with {{ receiver.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="container" style="max-width: 600px; display: flex; flex-direction: column; height: 80vh;">
+        <header style="border-bottom: 1px solid #E2E8F0; padding-bottom: 15px; margin-bottom: 15px;">
+            <a href="{{ url_for('matches', user_id=sender.id) }}" style="text-decoration: none; color: var(--primary-navy); font-size: 0.9rem;">
+                <i data-lucide="arrow-left" style="width: 16px; vertical-align: middle;"></i> Back to Matches
+            </a>
+            <h2 style="margin: 10px 0 0 0;">Chatting with {{ receiver.name }}</h2>
+        </header>
+
+        <div style="flex-grow: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px;" id="chat-box">
+            {% for msg in messages %}
+                <div style="max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem;
+                    {% if msg.sender_id == sender.id %}
+                        align-self: flex-end; background: var(--primary-navy); color: white;
+                    {% else %}
+                        align-self: flex-start; background: #EDF2F7; color: var(--text-main);
+                    {% endif %}">
+                    {{ msg.content }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST" style="margin-top: 20px; display: flex; gap: 10px;">
+            <input type="text" name="message" placeholder="Type a message..." required style="flex-grow: 1; margin: 0;">
+            <button type="submit" style="margin: 0; padding: 10px 20px;">Send</button>
+        </form>
+    </div>
+    <script>
+        lucide.createIcons();
+        var objDiv = document.getElementById("chat-box");
+        objDiv.scrollTop = objDiv.scrollHeight; // Auto-scroll to bottom
+    </script>
+</body>
+</html>
