@@ -44,19 +44,24 @@ def login():
     if request.method == 'POST':
         name = request.form.get('name')
         phone = request.form.get('phone')
+        college = request.form.get('college') # Required only for new accounts
         
-        # Check if user exists (Simple persistent login)
-        user = User.query.filter_by(name=name, phone=phone).first()
+        # 1. Look for an existing user with this exact Name and Phone
+        existing_user = User.query.filter_by(name=name, phone=phone).first()
         
-        if not user:
-            user = User(name=name, college=request.form.get('college'), phone=phone)
-            db.session.add(user)
-            db.session.commit()
-            session['user_id'] = user.id
-            return redirect(url_for('preferences', user_id=user.id))
+        if existing_user:
+            # 2. If they exist, log them in and go straight to Matches
+            session['user_id'] = existing_user.id
+            return redirect(url_for('matches', user_id=existing_user.id))
         
-        session['user_id'] = user.id
-        return redirect(url_for('matches', user_id=user.id))
+        # 3. If they DON'T exist, create the new account
+        new_user = User(name=name, college=college, phone=phone)
+        db.session.add(new_user)
+        db.session.commit()
+        
+        session['user_id'] = new_user.id
+        return redirect(url_for('preferences', user_id=new_user.id))
+        
     return render_template('login.html')
 
 @app.route('/inbox')

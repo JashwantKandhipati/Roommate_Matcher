@@ -1,23 +1,63 @@
-<div class="container" style="max-width: 800px;">
-    <nav style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-        <a href="{{ url_for('matches', user_id=session['user_id']) }}" style="text-decoration: none; color: var(--primary-navy); font-weight: 700;">
-            <i data-lucide="search"></i> Find Roommates
-        </a>
-        <span style="color: var(--accent-orange); font-weight: 800;">My Inbox</span>
-    </nav>
-
-    <h1>Messages</h1>
-    <div class="match-grid">
-        {% for contact in contacts %}
-        <a href="{{ url_for('chat', sender_id=session['user_id'], receiver_id=contact.id) }}" style="text-decoration: none;">
-            <div class="match-card" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h3 style="margin: 0;">{{ contact.name }}</h3>
-                    <p style="margin: 0; font-size: 0.9rem;">{{ contact.college }}</p>
-                </div>
-                <i data-lucide="chevron-right"></i>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Inbox - Roommate Matcher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 850px;">
+        <nav style="display: flex; justify-content: space-between; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #F1F5F9;">
+            <a href="{{ url_for('matches', user_id=session['user_id']) }}" style="text-decoration: none; color: var(--primary-navy); font-weight: 700; display: flex; align-items: center; font-size: 1.1rem;">
+                <i data-lucide="search" style="margin-right: 10px;"></i> Find Roommates
+            </a>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <span style="color: var(--accent-orange); font-weight: 800; font-size: 1.2rem;">MY INBOX</span>
+                <a href="{{ url_for('login') }}" style="text-decoration: none; color: #E53E3E; font-weight: 600; font-size: 0.95rem;">Logout</a>
             </div>
-        </a>
-        {% endfor %}
+        </nav>
+
+        <h1 style="text-align: left; margin-bottom: 10px; font-size: 2.5rem;">Messages</h1>
+        <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 30px;">Select a conversation to continue your roommate search.</p>
+
+        <div class="match-grid" style="display: flex; flex-direction: column; gap: 15px;">
+            {% if contacts %}
+                {% for contact in contacts %}
+                <a href="{{ url_for('chat', sender_id=session['user_id'], receiver_id=contact.id) }}" style="text-decoration: none; color: inherit;">
+                    <div class="match-card" style="display: flex; justify-content: space-between; align-items: center; background: white; border: 2px solid #E2E8F0; padding: 25px; border-radius: 20px; transition: transform 0.2s, border-color 0.2s;">
+                        <div style="display: flex; align-items: center; gap: 25px;">
+                            <div style="background: var(--primary-navy); color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem;">
+                                {{ contact.name[0] | upper }}
+                            </div>
+                            <div>
+                                <h3 style="margin: 0; color: var(--primary-navy); font-size: 1.4rem;">{{ contact.name }}</h3>
+                                <p style="margin: 5px 0 0 0; font-size: 1.1rem; color: var(--text-muted);">{{ contact.college }}</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--accent-orange); font-size: 0.9rem; font-weight: 700;">OPEN CHAT</span>
+                            <i data-lucide="message-square" style="color: var(--accent-orange); width: 28px; height: 28px;"></i>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 100px 40px; background: #F8FAFC; border-radius: 24px; border: 2px dashed #E2E8F0;">
+                    <i data-lucide="mail-question" style="width: 70px; height: 70px; color: #CBD5E0; margin-bottom: 25px;"></i>
+                    <h2 style="color: var(--text-muted); font-size: 1.8rem;">No messages yet</h2>
+                    <p style="max-width: 450px; margin: 0 auto; font-size: 1.15rem;">Your inbox is empty. Browse your matches and send a message to start a conversation!</p>
+                    <a href="{{ url_for('matches', user_id=session['user_id']) }}" class="btn-primary" style="display: inline-block; width: auto; margin-top: 30px; padding: 15px 40px; text-decoration: none;">Explore Roommates</a>
+                </div>
+            {% endif %}
+        </div>
     </div>
-</div>
+
+    <script>
+        // Renders the Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
