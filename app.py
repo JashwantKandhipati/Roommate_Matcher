@@ -1,11 +1,15 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from matching import calculate_compatibility
 from datetime import datetime
 
+load_dotenv()
+
 app = Flask(__name__)
 app.secret_key = 'any_long_random_string_here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///roommates.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///roommates.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
