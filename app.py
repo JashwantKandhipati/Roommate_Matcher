@@ -106,8 +106,12 @@ def preferences(user_id):
 @app.route('/matches/<int:user_id>')
 def matches(user_id):
     current_user = User.query.get_or_404(user_id)
-    # Fetch everyone except the person currently logged in
-    all_others = User.query.filter(User.id != user_id).all()
+    
+    # Fetch everyone except the current user AND strictly from the same college
+    all_others = User.query.filter(
+        User.id != user_id, 
+        User.college == current_user.college
+    ).all()
     
     scored_matches = []
     for other in all_others:
@@ -116,7 +120,7 @@ def matches(user_id):
     
     scored_matches.sort(key=lambda x: x['score'], reverse=True)
     
-    # FIX: Calculate the unread count to pass to the template
+    # Calculate the unread count
     unread_count = Message.query.filter_by(receiver_id=user_id, is_read=False).count()
     
     return render_template('matches.html', 
