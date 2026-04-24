@@ -1,138 +1,57 @@
+/* Modern Campus - High Readability Version */
 :root {
-    --primary-navy: #1a2f52;
-    --sidebar-navy: #162540;
-    --accent-coral: #e06040;
-    --bg-light: #f8fafc;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --white: #ffffff;
-    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --radius: 20px;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --primary-navy: #1B365D;
+    --accent-orange: #FF7900;
+    --bg-off-white: #F8F9FA;
+    --text-main: #1A202C; /* Darker for higher contrast */
+    --text-muted: #4A5568;
+    --border-radius: 16px;
+    --font-base: 18px; /* Increased from 14px */
 }
 
 body {
-    background-color: var(--primary-navy);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: var(--font-base);
+    line-height: 1.6; /* More space between lines */
+    background-color: var(--bg-off-white);
     color: var(--text-main);
-    min-height: 100vh;
+    margin: 0;
 }
 
-/* Dashboard Layout */
-.app-container {
-    display: flex;
-    min-height: 100vh;
+.container {
+    background: white;
+    padding: 3rem; /* More padding for a premium feel */
+    border-radius: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    max-width: 650px;
+    width: 90%;
+    margin: 40px auto;
 }
 
-.sidebar {
-    width: 260px;
-    background: var(--sidebar-navy);
-    color: white;
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-}
+h1 { font-size: 2.5rem; font-weight: 800; color: var(--primary-navy); }
+h2 { font-size: 1.5rem; color: var(--text-muted); }
+h3 { font-size: 1.25rem; margin-top: 2.5rem; }
 
-.main-content {
-    flex: 1;
-    margin-left: 260px;
-    background: var(--bg-light);
-    padding: 40px;
-    border-top-left-radius: 40px;
-}
-
-/* Sidebar Navigation */
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #94a3b8;
-    text-decoration: none;
-    padding: 12px 15px;
+/* Larger Inputs */
+input, select, textarea {
+    font-size: 1.1rem;
+    padding: 14px;
     border-radius: 12px;
-    margin-bottom: 8px;
-    transition: 0.2s;
-    font-weight: 600;
+    border: 2px solid #E2E8F0; /* Thicker borders for better visibility */
 }
 
-.nav-link:hover, .nav-link.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+button, .btn-primary {
+    font-size: 1.1rem;
+    padding: 16px;
+    font-weight: 700;
 }
 
+/* Notification Badge */
 .nav-badge {
-    background: var(--accent-coral);
+    background: #E53E3E;
     color: white;
     font-size: 0.75rem;
     padding: 2px 8px;
     border-radius: 10px;
-    margin-left: auto;
+    margin-left: 5px;
 }
-
-/* Cards & Grid */
-.card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 25px;
-    box-shadow: var(--card-shadow);
-    border: 1px solid #e2e8f0;
-}
-
-.match-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-/* Buttons */
-.btn {
-    padding: 12px 24px;
-    border-radius: 12px;
-    border: none;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-primary { background: var(--accent-coral); color: white; }
-
-/* Form Elements */
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); }
-input[type="text"], input[type="tel"], input[type="number"], select {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: 2px solid #e2e8f0;
-    font-size: 1rem;
-}
-
-input[type="range"] { accent-color: var(--accent-coral); width: 100%; }
-
-/* Messaging */
-.chat-container {
-    height: 60vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    background: #f1f5f9;
-    border-radius: 15px;
-    margin-bottom: 20px;
-}
-
-.message { max-width: 75%; padding: 12px 18px; border-radius: 18px; line-height: 1.4; }
-.sent { align-self: flex-end; background: var(--accent-coral); color: white; border-bottom-right-radius: 4px; }
-.received { align-self: flex-start; background: white; color: var(--text-main); border-bottom-left-radius: 4px; }
