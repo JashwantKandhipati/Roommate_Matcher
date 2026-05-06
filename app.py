@@ -101,22 +101,36 @@ def inbox():
 
 @app.route('/preferences/<int:user_id>', methods=['GET', 'POST'])
 def preferences(user_id):
-    user = User.query.get_or_404(user_id) # Find the user in the database
+    user = User.query.get_or_404(user_id)
     
     if request.method == 'POST':
-        # Update the user's empty columns with the form data
-        user.year = request.form.get('year')
+        # Use safe integer conversion helper
+        def safe_int(val, default=0):
+            try:
+                return int(val) if val else default
+            except (ValueError, TypeError):
+                return default
+
+        # Update columns with explicit integer conversion
+        user.age = safe_int(request.form.get('age'))
+        user.budget = safe_int(request.form.get('budget'))
+        user.cleanliness = safe_int(request.form.get('cleanliness'), 80)
+        user.noise_level = safe_int(request.form.get('noise'), 30)
+        
+        # Strings and Booleans remain simple
         user.gender = request.form.get('gender')
         user.hobbies = request.form.get('hobbies')
-        user.budget = request.form.get('budget')
-        user.cleanliness = request.form.get('cleanliness')
-        user.noise_level = request.form.get('noise')
         user.sleep_schedule = request.form.get('sleep_schedule')
         user.smoking = True if request.form.get('smoking') else False
         user.drinking = True if request.form.get('drinking') else False
         
-        db.session.commit() # Save the updates
-        return redirect(url_for('matches', user_id=user.id)) # Send to matches page
+        try:
+            db.session.commit()
+            return redirect(url_for('matches', user_id=user.id))
+        except Exception as e:
+            db.session.rollback()
+            print(f"Database Error: {e}")
+            return "There was an error saving your profile. Please check your inputs.", 500
         
     return render_template('preferences.html', user_id=user_id)
 
