@@ -67,25 +67,34 @@ with app.app_context():
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        name = request.form.get('name')
-        phone = request.form.get('phone')
-        college = request.form.get('college') # Required only for new accounts
+        name = request.form.get('name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        college = request.form.get('college', '').strip()
         
-        # 1. Look for an existing user with this exact Name and Phone
-        existing_user = User.query.filter_by(name=name, phone=phone).first()
-        
-        if existing_user:
-            # 2. If they exist, log them in and go straight to Matches
-            session['user_id'] = existing_user.id
-            return redirect(url_for('matches', user_id=existing_user.id))
-        
-        # 3. If they DON'T exist, create the new account
-        new_user = User(name=name, college=college, phone=phone)
-        db.session.add(new_user)
-        db.session.commit()
-        
-        session['user_id'] = new_user.id
-        return redirect(url_for('preferences', user_id=new_user.id))
+        try:
+            # 1. Look for an existing user
+            existing_user = User.query.filter_by(name=name, phone=phone).first()
+            
+            if existing_user:
+                session['user_id'] = existing_user.id
+                return redirect(url_for('matches', user_id=existing_user.id))
+            
+            # 2. Prevent null constraint failures on new accounts
+            if not college:
+                return render_template('login.html', error="College is required for new accounts.")
+
+            # 3. Create new user safely
+            new_user = User(name=name, college=college, phone=phone)
+            db.session.add(new_user)
+            db.session.commit()
+            
+            session['user_id'] = new_user.id
+            return redirect(url_for('preferences', user_id=new_user.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"Login/Registration Error: {e}")
+            return "An error occurred while logging in. Please try again.", 500
         
     return render_template('login.html')
 
