@@ -28,7 +28,7 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    college = db.Column(db.String(100), nullable=False)
+    college = db.Column(db.String(100), nullable=False, index=True)
     phone = db.Column(db.String(20), nullable=False)
     
     # Lifestyle Metrics
@@ -42,8 +42,6 @@ class User(db.Model):
     smoking = db.Column(db.Boolean, default=False)
     drinking = db.Column(db.Boolean, default=False)
 
-
-
     # Personification
     bio = db.Column(db.Text, nullable=True)
     profile_image = db.Column(db.String(300), nullable=True)
@@ -51,11 +49,17 @@ class User(db.Model):
 # Chat feature
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
     content = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     is_read = db.Column(db.Boolean, default=False) # For notifications
+
+@app.teardown_request
+def teardown_request(exception=None):
+    if exception:
+        db.session.rollback()
+    db.session.remove()
 
 with app.app_context():
     db.create_all()
