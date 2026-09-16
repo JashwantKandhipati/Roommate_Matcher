@@ -1,4 +1,10 @@
-# matching.py
+
+SLEEP_ORDER = {
+    'early bird': 1,
+    'flexible': 2,
+    'night owl': 3
+}
+
 
 def year_similarity(year1, year2):
     if not year1 or not year2:
@@ -12,29 +18,34 @@ def calculate_compatibility(user, other):
     max_score = 0
 
     # Budget (25%)
-    if user.budget and other.budget:
+    if user.budget is not None and other.budget is not None:
         budget_diff = abs(user.budget - other.budget)
-        budget_score = max(0, 100 - budget_diff)
+        budget_score = max(0, 100 - (budget_diff / 10))  # Scales $1000 diff down by 100 points
         score += budget_score * 0.25
         max_score += 100 * 0.25
 
-    # Noise level (20%)
-    if user.noise_level and other.noise_level:
+    # Noise level (20%) - Assumes 1 to 10 scale
+    if user.noise_level is not None and other.noise_level is not None:
         diff = abs(user.noise_level - other.noise_level)
-        score += max(0, 100 - diff) * 0.20
+        noise_score = max(0, 100 - (diff * 10))
+        score += noise_score * 0.20
         max_score += 100 * 0.20
 
-    # Cleanliness (15%)
-    if user.cleanliness and other.cleanliness:
+    # Cleanliness (15%) - Assumes 1 to 10 scale
+    if user.cleanliness is not None and other.cleanliness is not None:
         diff = abs(user.cleanliness - other.cleanliness)
-        score += max(0, 100 - diff) * 0.15
+        cleanliness_score = max(0, 100 - (diff * 10))
+        score += cleanliness_score * 0.15
         max_score += 100 * 0.15
 
     # Sleep schedule (15%)
-    sleep_order = {'early': 0, 'normal': 1, 'night': 2}
     if user.sleep_schedule and other.sleep_schedule:
-        diff = abs(sleep_order[user.sleep_schedule] - sleep_order[other.sleep_schedule])
-        score += max(0, 100 - (diff * 50)) * 0.15
+        # Case-insensitive lookup with default fallback to 'flexible' (2)
+        s1 = SLEEP_ORDER.get(str(user.sleep_schedule).strip().lower(), 2)
+        s2 = SLEEP_ORDER.get(str(other.sleep_schedule).strip().lower(), 2)
+        diff = abs(s1 - s2)
+        sleep_score = max(0, 100 - (diff * 50))
+        score += sleep_score * 0.15
         max_score += 100 * 0.15
 
     # Class year (10%)
@@ -54,4 +65,5 @@ def calculate_compatibility(user, other):
 
     if max_score == 0:
         return 0
+
     return round((score / max_score) * 100, 1)
