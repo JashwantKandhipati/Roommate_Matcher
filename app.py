@@ -72,16 +72,19 @@ def login():
         college = request.form.get('college', '').strip()
         
         try:
-            # 1. Look for an existing user
-            existing_user = User.query.filter_by(name=name, phone=phone).first()
+            # 1. Case-insensitive name lookup with trimmed whitespace
+            existing_user = User.query.filter(
+                db.func.lower(User.name) == name.lower(),
+                User.phone == phone
+            ).first()
             
             if existing_user:
                 session['user_id'] = existing_user.id
                 return redirect(url_for('matches', user_id=existing_user.id))
             
-            # 2. Prevent null constraint failures on new accounts
+            # 2. Prevent NOT NULL database crashes if user doesn't exist yet
             if not college:
-                return render_template('login.html', error="College is required for new accounts.")
+                return render_template('login.html', error="Account not found. Please fill in College to sign up.")
 
             # 3. Create new user safely
             new_user = User(name=name, college=college, phone=phone)
@@ -94,7 +97,7 @@ def login():
         except Exception as e:
             db.session.rollback()
             print(f"Login/Registration Error: {e}")
-            return "An error occurred while logging in. Please try again.", 500
+            return render_template('login.html', error="A database error occurred. Please try again.")
         
     return render_template('login.html')
 
