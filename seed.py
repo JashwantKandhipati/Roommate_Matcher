@@ -32,25 +32,21 @@ BIOS = [
 
 def seed_database(users_per_college=5):
     with app.app_context():
-        # 1. Clear all existing data
-        print("Wiping existing user records...")
+        # 1. Clear all existing data with CASCADE
+        print("Wiping existing records...")
         try:
-            db.session.query(User).delete()
+            if db.engine.name == 'postgresql':
+                db.session.execute(db.text('TRUNCATE TABLE message, "user" RESTART IDENTITY CASCADE;'))
+            else:
+                db.session.execute(db.text('DELETE FROM message;'))
+                db.session.query(User).delete()
             db.session.commit()
+            print("Database wiped and primary key sequence reset.")
         except Exception as e:
             db.session.rollback()
             print(f"Error clearing records: {e}")
 
-        # 2. Reset the PostgreSQL auto-increment sequence to 1
-        if db.engine.name == 'postgresql':
-            try:
-                db.session.execute(db.text("ALTER SEQUENCE user_id_seq RESTART WITH 1;"))
-                db.session.commit()
-                print("Primary key sequence reset to 1.")
-            except Exception as e:
-                db.session.rollback()
-
-        # 3. Generate random user entries for each college
+        # 2. Generate random user entries for each college
         print(f"Generating {users_per_college} random profiles for each college...")
         generated_users = []
         
